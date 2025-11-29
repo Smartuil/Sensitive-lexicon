@@ -1,0 +1,35 @@
+name: Merge Text Files
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  merge-files:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+        
+    - name: Merge files from all directories
+      run: |
+        python merge_script.py
+        
+    - name: Commit and push if changed
+      run: |
+        if git diff --quiet; then
+          echo "没有变化需要提交"
+        else
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add format.txt
+          git commit -m "自动合并所有目录的文本文件 [skip ci]"
+          git push
+        fi
