@@ -22,14 +22,20 @@ jobs:
       run: |
         python merge_script.py
         
+    - name: Force update output file timestamp
+      run: |
+        if [ -f "format.txt" ]; then
+          touch format.txt
+        fi
+        
     - name: Commit and push if changed
       run: |
-        if git diff --quiet; then
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add format.txt
+        if git diff --cached --quiet; then
           echo "没有变化需要提交"
         else
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add format.txt
           git commit -m "自动合并所有目录的文本文件 [skip ci]"
           git push
         fi
