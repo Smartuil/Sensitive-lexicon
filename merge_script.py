@@ -16,6 +16,7 @@ def merge_txt_files():
     
     # 递归查找所有txt文件
     txt_files = glob.glob("**/*.txt", recursive=True)
+    print(f"找到的所有TXT文件: {txt_files}")  # 添加这行
     
     # 过滤文件
     filtered_files = []
@@ -53,6 +54,17 @@ def merge_txt_files():
     
     # 写入合并后的文件
     if all_content:
+        # 检查输出文件是否已存在
+        output_exists = os.path.exists(config['output_file'])
+        if output_exists:
+            print(f"输出文件已存在: {config['output_file']}")
+            with open(config['output_file'], 'r', encoding=config['encoding']) as f:
+                old_content = f.read()
+            new_content = config['separator'].join(all_content)
+            print(f"旧内容长度: {len(old_content)}")
+            print(f"新内容长度: {len(new_content)}")
+            print(f"内容是否相同: {old_content == new_content}")
+        
         with open(config['output_file'], 'w', encoding=config['encoding']) as f:
             f.write(config['separator'].join(all_content))
         
